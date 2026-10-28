@@ -1,8 +1,8 @@
-import './globals.css'
+import './globals.css';
 
 export const metadata = {
-  title: 'Artesanos y Agricultores - Tren Solar de la Quebrada',
-  description: 'Catálogo dinámico para pasajeros del Tren Solar',
+  title: 'Tren Solar - Mercado en Estación',
+  description: 'Conectando artesanos y agricultores con pasajeros',
 }
 
 export default function RootLayout({ children }) {
