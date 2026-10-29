@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tren Solar - Mercado en Estación (MVP Mockup)</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  
+  <style>
+    /* Estilos personalizados y de apoyo */
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    }
+    .hide-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .hide-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+  </style>
+</head>
+<body class="bg-[#FDF8F3] text-stone-800 min-h-screen flex flex-col">
+
+  <!-- HEADER PRINCIPAL -->
+  <header class="bg-gradient-to-r from-[#B85B32] via-[#C86A3C] to-[#8C3A27] text-white shadow-md sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex flex-col sm:flex-row justify-between items-center gap-3">
+      <div class="flex items-center gap-3">
+        <div class="p-2.5 bg-amber-400/20 backdrop-blur-md rounded-xl border border-amber-300/30">
+          <i data-lucide="train" class="w-7 h-7 text-amber-200 animate-pulse"></i>
+        </div>
+        <div>
+          <h1 class="text-xl font-bold tracking-wide flex items-center gap-2">
+            Tren Solar <span class="text-amber-300 text-xs uppercase px-2 py-0.5 bg-amber-900/40 rounded-full border border-amber-400/30">Mercado en Estación</span>
+          </h1>
+          <p class="text-xs text-amber-100/80">Quebrada de Humahuaca • Jujuy, Argentina</p>
+        </div>
+      </div>
+
+      <!-- NAVEGACIÓN DE PESTAÑAS -->
+      <nav class="flex items-center bg-black/20 p-1 rounded-xl border border-white/10 text-xs sm:text-sm font-medium">
+        <button id="nav-catalog" onclick="switchTab('catalog')" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-all bg-amber-100 text-[#8C3A27] font-semibold shadow-sm">
+          <i data-lucide="shopping-bag" class="w-4 h-4"></i> Catálogo Pasajeros
+        </button>
+        <button id="nav-vendor" onclick="switchTab('vendor')" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-all text-amber-100 hover:text-white hover:bg-white/10">
+          <i data-lucide="store" class="w-4 h-4"></i> Panel Vendedor
+        </button>
+        <button id="nav-schedules" onclick="switchTab('schedules')" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-all text-amber-100 hover:text-white hover:bg-white/10">
+          <i data-lucide="clock" class="w-4 h-4"></i> Horarios Tren
+        </button>
+        <button id="nav-backend" onclick="switchTab('backend')" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-all text-amber-100 hover:text-white hover:bg-white/10">
+          <i data-lucide="code" class="w-4 h-4"></i> Comercio Justo
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- CONTENIDO PRINCIPAL -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+
+    <!-- SECCIÓN 1: CATÁLOGO PARA PASAJEROS -->
+    <section id="tab-catalog" class="space-y-6">
+      <!-- Banner Informativo -->
+      <div class="bg-gradient-to-r from-amber-100 via-orange-100 to-amber-50 p-4 sm:p-6 rounded-2xl border border-amber-200/80 shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div class="space-y-1">
+          <span class="inline-flex items-center gap-1 text-xs font-semibold uppercase tracking-wider text-[#B85B32] bg-amber-200/60 px-2.5 py-0.5 rounded-full">
+            <i data-lucide="sparkles" class="w-3.5 h-3.5"></i> Compra Local en Trayecto
+          </span>
+          <h2 class="text-xl sm:text-2xl font-bold text-stone-900">
+            Comprá a artesanos y agricultores mientras viajás
+          </h2>
+          <p class="text-sm text-stone-600 max-w-2xl">
+            Seleccioná tu producto, coordiná por WhatsApp y el productor local te esperará en el andén de la estación con tu pedido listo en el horario estipulado de parada.
+          </p>
+        </div>
+        <button onclick="switchTab('schedules')" class="whitespace-nowrap px-4 py-2 bg-[#B85B32] text-white text-xs font-semibold rounded-xl hover:bg-[#A04E29] transition-all shadow-sm flex items-center gap-2">
+          Ver Cronograma de Trenes <i data-lucide="chevron-right" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <!-- Filtros de Búsqueda -->
+      <div class="bg-white p-4 sm:p-5 rounded-2xl shadow-sm border border-stone-200 space-y-4">
+        <div class="flex flex-col md:flex-row gap-4 justify-between items-stretch md:items-center">
+          <!-- Buscador -->
+          <div class="relative flex-1">
+            <i data-lucide="search" class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-stone-400"></i>
+            <input 
+              id="search-input"
+              type="text" 
+              placeholder="Buscar ponchos, papas andinas, vasijas, agricultores..." 
+              oninput="renderCatalog()"
+              className="w-full pl-9 pr-4 py-2 text-sm bg-stone-50 border border-stone-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#B85B32]/30 focus:border-[#B85B32]"
+            />
+          </div>
+
+          <!-- Filtro Categoría -->
+          <div class="flex items-center gap-2 overflow-x-auto pb-1 md:pb-0">
+            <span class="text-xs font-medium text-stone-500 uppercase flex items-center gap-1">
+              <i data-lucide="filter" class="w-3.5 h-3.5"></i> Tipo:
+            </span>
+            <div id="category-buttons" class="flex items-center gap-1">
+              <!-- Renderizado dinámico de categorías -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Selector de Estaciones -->
+        <div class="pt-2 border-t border-stone-100">
+          <span class="text-xs font-medium text-stone-500 uppercase flex items-center gap-1 mb-2">
+            <i data-lucide="map-pin" class="w-3.5 h-3.5 text-[#B85B32]"></i> Filtrar por Estación de Entrega:
+          </span>
+          <div id="station-buttons" class="flex flex-wrap gap-2">
+            <!-- Renderizado dinámico de estaciones -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Contenedor del Catálogo de Vendedores -->
+      <div id="catalog-container" class="space-y-8">
+        <!-- Renderizado dinámico por JS -->
+      </div>
+    </section>
+
+    <!-- SECCIÓN 2: PANEL DE CONTROL DEL VENDEDOR -->
+    <section id="tab-vendor" class="space-y-6 max-w-4xl mx-auto hidden">
+      <!-- Selector de Perfil Simulado -->
+      <div class="bg-amber-900 text-amber-100 p-4 rounded-2xl flex flex-col sm:flex-row justify-between items-center gap-3">
+        <div class="flex items-center gap-2 text-xs">
+          <i data-lucide="user-check" class="w-4 h-4 text-amber-300"></i>
+          <span>Simulando sesión como:</span>
+        </div>
+        <select 
+          id="vendor-selector" 
+          onchange="changeCurrentVendor(this.value)"
+          class="bg-amber-950 text-white text-xs font-medium py-1.5 px-3 rounded-lg border border-amber-700 focus:outline-none"
+        >
+          <!-- Opciones dinámicas -->
+        </select>
+      </div>
+
+      <!-- Dashboard Vendedor -->
+      <div class="bg-white rounded-2xl border border-stone-200 shadow-sm p-6 space-y-6">
+        <!-- Header Perfil Vendedor -->
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-6 border-b border-stone-200">
+          <div>
+            <span class="text-xs font-bold text-[#B85B32] uppercase tracking-wider">Perfil de Vendedor Local</span>
+            <h2 id="vendor-panel-name" class="text-2xl font-bold text-stone-900">-</h2>
+            <p id="vendor-panel-info" class="text-xs text-stone-500 mt-0.5">-</p>
+          </div>
+
+          <!-- Switch de Disponibilidad -->
+          <div class="bg-stone-50 p-4 rounded-xl border border-stone-200 flex items-center gap-4 w-full sm:w-auto justify-between">
+            <div>
+              <p class="text-xs font-bold text-stone-800">¿Asistirás hoy al andén?</p>
+              <p class="text-[11px] text-stone-500">Habilita tu stock en el catálogo del turista</p>
+            </div>
+            <button
+              id="vendor-toggle-btn"
+              onclick="toggleCurrentVendorStock()"
+              class="relative inline-flex h-7 w-14 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none bg-emerald-600"
+            >
+              <span id="vendor-toggle-dot" class="pointer-events-none inline-block h-6 w-6 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out translate-x-7"></span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Banner de Estado de Stock -->
+        <div id="vendor-status-banner" class="p-4 rounded-xl text-xs font-medium flex items-center gap-3 bg-emerald-50 text-emerald-900 border border-emerald-200">
+          <!-- Dinámico por JS -->
+        </div>
+
+        <!-- Formulario para agregar nuevo producto -->
+        <div class="bg-stone-50 p-5 rounded-xl border border-stone-200 space-y-4">
+          <h3 class="font-bold text-stone-800 text-sm flex items-center gap-2">
+            <i data-lucide="plus" class="w-4 h-4 text-[#B85B32]"></i> Publicar Nuevo Artículo (Máximo 6 por vendedor)
+          </h3>
+          
+          <form onsubmit="handleAddProduct(event)" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label class="block text-[11px] font-bold text-stone-600 uppercase mb-1">Nombre del Producto</label>
+              <input id="input-prod-name" type="text" placeholder="Ej. Queso de Cabra Criollo" required class="w-full px-3 py-2 text-xs bg-white border border-stone-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#B85B32]" />
+            </div>
+            <div>
+              <label class="block text-[11px] font-bold text-stone-600 uppercase mb-1">Precio ($ ARS)</label>
+              <input id="input-prod-price" type="number" placeholder="Ej. 4500" required class="w-full px-3 py-2 text-xs bg-white border border-stone-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#B85B32]" />
+            </div>
+            <div class="sm:col-span-2">
+              <label class="block text-[11px] font-bold text-stone-600 uppercase mb-1">Ruta Local de Imagen (ej. images/mi-producto.jpg)</label>
+              <input id="input-prod-img" type="text" placeholder="images/nuevo-producto.jpg" class="w-full px-3 py-2 text-xs bg-white border border-stone-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#B85B32]" />
+            </div>
+            <div class="sm:col-span-2">
+              <label class="block text-[11px] font-bold text-stone-600 uppercase mb-1">Descripción Breve</label>
+              <input id="input-prod-desc" type="text" placeholder="Detalles de elaboración, peso o materiales..." class="w-full px-3 py-2 text-xs bg-white border border-stone-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-[#B85B32]" />
+            </div>
+            <div class="sm:col-span-2 pt-1">
+              <button type="submit" class="px-4 py-2 bg-[#8C3A27] text-white text-xs font-semibold rounded-lg hover:bg-[#722E1E] transition-colors">
+                Guardar y Publicar
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <!-- Lista de Productos Publicados -->
+        <div>
+          <h3 id="vendor-products-title" class="font-bold text-stone-800 text-sm mb-3">Tus Productos Publicados</h3>
+          <div id="vendor-products-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <!-- Dinámico JS -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECCIÓN 3: CRONOGRAMA DE HORARIOS DEL TREN -->
+    <section id="tab-schedules" class="space-y-6 max-w-5xl mx-auto hidden">
+      <div class="bg-white p-6 rounded-2xl border border-stone-200 shadow-sm space-y-2">
+        <span class="text-xs font-bold text-[#B85B32] uppercase tracking-wider">Horarios Oficiales</span>
+        <h2 class="text-2xl font-bold text-stone-900">Cronograma del Tren Solar de la Quebrada</h2>
+        <p class="text-xs text-stone-600">
+          Extraídos directamente de la programación de recorridos (Ruta A y Ruta B). Los artesanos y agricultores se presentan en el andén unos minutos antes del horario estipulado de llegada.
+        </p>
+      </div>
+
+      <!-- RUTA A -->
+      <div class="bg-white rounded-2xl border border-stone-200 shadow-sm overflow-hidden">
+        <div class="bg-[#8C3A27] text-white p-4">
+          <h3 class="font-bold text-base">Ruta A (Frecuencia Principal)</h3>
+        </div>
+        <div class="p-5 grid grid-cols-1 md:grid-cols-2 gap-6">
+          <!-- IDA -->
+          <div>
+            <h4 class="text-xs font-bold uppercase tracking-wider text-amber-700 mb-3 bg-amber-50 p-2 rounded-lg border border-amber-200/60 inline-block">
+              IDA: Volcán ➔ Tilcara
+            </h4>
+            <div class="space-y-2">
+              <div class="flex justify-between items-center text-xs p-2.5 bg-stone-50 rounded-lg border border-stone-100">
+                <span class="font-bold text-stone-800">Volcán</span>
+                <span class="text-stone-600">Salida: 09:00</span>
+              </div>
+              <div class="flex justify-between items-center text-xs p-2.5 bg-stone-50 rounded-lg border border-stone-100">
+                <span class="font-bold text-stone-800">Purmamarca</span>
+                <span class="text-stone-600">Llegada: 09:50 | Salida: 12:15</span>
+              </div>
+              <div class="flex justify-between items-center text-xs p-2.5 bg-stone-50 rounded-lg border border-stone-100">
+                <span class="font-bold text-stone-800">Maimará</span>
+                <span class="text-stone-600">Llegada: 12:55 | Salida: 13:55</span>
+              </div>
+              <div class="flex justify-between items-center text-xs p-2.5 bg-stone-50 rounded-lg border border-stone-100">
+                <span class="font-bold text-stone-800">Tilcara</span>
+                <span class="text-stone-600">Llegada: 14:10</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- VUELTA -->
+          <div>
+            <h4 class="text-xs font-bold uppercase tracking-wider text-stone-700 mb-3 bg-stone-100 p-2 rounded-lg border border-stone-200 inline-block">
+              VUELTA: Tilcara ➔ Volcán
+            </h4>
+            <div class="space-y-2">
+              <div class="flex justify-between items-center text-xs p-2.5 bg-stone-50 rounded-lg border border-stone-100">
+                <span class="font-bold text-stone-800">Tilcara</span>
+                <span class="text-stone-600">Salida: 15:50</span>
+              </div>
+              <div class="flex justify-between items-center text-xs p-2.5 bg-stone-50 rounded-lg border border-stone-100">
+                <span class="font-bold text-stone-800">Maimará</span>
+                <span class="text-stone-600">Llegada: 16:05 | Salida: 16:10</span>
+              </div>
+              <div class="flex justify-between items-center text-xs p-2.5 bg-stone-50 rounded-lg border border-stone-100">
+                <span class="font-bold text-stone-800">Hornillos</span>
+                <span class="text-stone-600">Llegada: 16:20 | Salida: 17:20</span>
+              </div>
+              <div class="flex justify-between items-center text-xs p-2.5 bg-stone-50 rounded-lg border border-stone-100">
+                <span class="font-bold text-stone-800">Tumbaya</span>
+                <span class="text-stone-600">Llegada: 18:20 | Salida: 19:20</span>
+              </div>
+              <div class="flex justify-between items-center text-xs p-2.5 bg-stone-50 rounded-lg border border-stone-100">
+                <span class="font-bold text-stone-800">Volcán</span>
+                <span class="text-stone-600">Llegada: 19:40</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RUTA B -->
+      <div class="bg-white rounded-2xl border border-stone-200 shadow-sm overflow-hidden">
+        <div class="bg-[#B85B32] text-white p-4">
+          <h3 class="font-bold text-base">Ruta B (Frecuencia Secundaria / Extendida)</h3>
+        </div>
+        <div class="p-5 grid grid-cols-1 md:grid-cols-2 gap-6">
+          <!-- IDA -->
+          <div>
+            <h4 class="text-xs font-bold uppercase tracking-wider text-amber-700 mb-3 bg-amber-50 p-2 rounded-lg border border-amber-200/60 inline-block">
+              IDA: Volcán ➔ Tilcara
+            </h4>
+            <div class="space-y-2">
+              <div class="flex justify-between items-center text-xs p-2.5 bg-stone-50 rounded-lg border border-stone-100">
+                <span class="font-bold text-stone-800">Volcán</span>
+                <span class="text-stone-600">Salida: 10:00</span>
+              </div>
+              <div class="flex justify-between items-center text-xs p-2.5 bg-stone-50 rounded-lg border border-stone-100">
+                <span class="font-bold text-stone-800">Tumbaya</span>
+                <span class="text-stone-600">Llegada: 10:20 | Salida: 11:20</span>
+              </div>
+              <div class="flex justify-between items-center text-xs p-2.5 bg-stone-50 rounded-lg border border-stone-100">
+                <span class="font-bold text-stone-800">Purmamarca</span>
+                <span class="text-stone-600">Llegada: 11:50 | Salida: 14:15</span>
+              </div>
+              <div class="flex justify-between items-center text-xs p-2.5 bg-stone-50 rounded-lg border border-stone-100">
+                <span class="font-bold text-stone-800">Hornillos</span>
+                <span class="text-stone-600">Llegada: 14:45 | Salida: 15:45</span>
+              </div>
+              <div class="flex justify-between items-center text-xs p-2.5 bg-stone-50 rounded-lg border border-stone-100">
+                <span class="font-bold text-stone-800">Maimará</span>
+                <span class="text-stone-600">Llegada: 15:55 | Salida: 16:55</span>
+              </div>
+              <div class="flex justify-between items-center text-xs p-2.5 bg-stone-50 rounded-lg border border-stone-100">
+                <span class="font-bold text-stone-800">Tilcara</span>
+                <span class="text-stone-600">Llegada: 17:10</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- VUELTA -->
+          <div>
+            <h4 class="text-xs font-bold uppercase tracking-wider text-stone-700 mb-3 bg-stone-100 p-2 rounded-lg border border-stone-200 inline-block">
+              VUELTA: Tilcara ➔ Volcán
+            </h4>
+            <div class="space-y-2">
+              <div class="flex justify-between items-center text-xs p-2.5 bg-stone-50 rounded-lg border border-stone-100">
+                <span class="font-bold text-stone-800">Tilcara</span>
+                <span class="text-stone-600">Salida: 18:50</span>
+              </div>
+              <div class="flex justify-between items-center text-xs p-2.5 bg-stone-50 rounded-lg border border-stone-100">
+                <span class="font-bold text-stone-800">Maimará</span>
+                <span class="text-stone-600">Llegada: 19:05 | Salida: 19:05</span>
+              </div>
+              <div class="flex justify-between items-center text-xs p-2.5 bg-stone-50 rounded-lg border border-stone-100">
+                <span class="font-bold text-stone-800">Hornillos</span>
+                <span class="text-stone-600">Llegada: 19:15 | Salida: 19:15</span>
+              </div>
+              <div class="flex justify-between items-center text-xs p-2.5 bg-stone-50 rounded-lg border border-stone-100">
+                <span class="font-bold text-stone-800">Purmamarca</span>
+                <span class="text-stone-600">Llegada: 19:45 | Salida: 19:50</span>
+              </div>
+              <div class="flex justify-between items-center text-xs p-2.5 bg-stone-50 rounded-lg border border-stone-100">
+                <span class="font-bold text-stone-800">Tumbaya</span>
+                <span class="text-stone-600">Llegada: 20:20 | Salida: 20:20</span>
+              </div>
+              <div class="flex justify-between items-center text-xs p-2.5 bg-stone-50 rounded-lg border border-stone-100">
+                <span class="font-bold text-stone-800">Volcán</span>
+                <span class="text-stone-600">Llegada: 20:40</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECCIÓN 4: CÓDIGO BACKEND & ARQUITECTURA -->
+    <section id="tab-backend" class="space-y-6 max-w-5xl mx-auto hidden">
+      <div class="bg-white p-6 rounded-2xl border border-stone-200 shadow-sm space-y-2">
+        <span class="text-xs font-bold text-[#B85B32] uppercase tracking-wider">Arquitectura & Backend</span>
+        <h2 class="text-2xl font-bold text-stone-900">Código Next.js + Supabase + Vercel</h2>
+        <p class="text-xs text-stone-600">
+          Estructura completa para la implementación real fullstack de esta propuesta con Supabase DB y API Routes de Next.js.
+        </p>
+      </div>
+
+      <!-- Esquema SQL Supabase -->
+      <div class="bg-stone-900 text-stone-100 rounded-2xl p-5 shadow-sm space-y-3 font-mono text-xs overflow-x-auto">
+        <div class="flex justify-between items-center border-b border-stone-800 pb-2">
+          <span class="text-amber-400 font-bold">1. Esquema SQL para Supabase (Database Schema)</span>
+          <span class="text-stone-500 text-[10px]">supabase_schema.sql</span>
+        </div>
+        <pre class="text-emerald-400 leading-relaxed">
+-- Tabla Vendedores
+CREATE TABLE vendors (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  name TEXT NOT NULL,
+  category TEXT CHECK (category IN ('Artesano', 'Agricultor')),
+  station TEXT NOT NULL,
+  whatsapp TEXT NOT NULL,
+  is_available BOOLEAN DEFAULT true,
+  bio TEXT,
+  avatar_url TEXT,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now())
+);
+
+-- Tabla Productos
+CREATE TABLE products (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  vendor_id UUID REFERENCES vendors(id) ON DELETE CASCADE,
+  name TEXT NOT NULL,
+  price NUMERIC NOT NULL,
+  description TEXT,
+  image_url TEXT,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now())
+);</pre>
+      </div>
+
+      <!-- API Route Next.js /api/toggle-stock -->
+      <div class="bg-stone-900 text-stone-100 rounded-2xl p-5 shadow-sm space-y-3 font-mono text-xs overflow-x-auto">
+        <div class="flex justify-between items-center border-b border-stone-800 pb-2">
+          <span class="text-amber-400 font-bold">2. Next.js App Router: API Route `/app/api/toggle-stock/route.ts`</span>
+          <span class="text-stone-500 text-[10px]">Next.js 14+</span>
+        </div>
+        <pre class="text-blue-300 leading-relaxed">
+import { createClient } from '@supabase/supabase-js';
+import { NextResponse } from 'next/server';
+
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!
+);
+
+export async function POST(request: Request) {
+  try {
+    const { vendorId, isAvailable } = await request.json();
+
+    const { data, error } = await supabase
+      .from('vendors')
+      .update({ is_available: isAvailable })
+      .eq('id', vendorId)
+      .select();
+
+    if (error) throw error;
+
+    return NextResponse.json({ success: true, vendor: data[0] });
+  } catch (error: any) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+}</pre>
+      </div>
+    </section>
+  </main>
+
+  <!-- MODAL PEDIDO WHATSAPP -->
+  <div id="order-modal" class="fixed inset-0 bg-black/60 backdrop-blur-xs z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-md w-full p-6 space-y-5 shadow-2xl border border-stone-200">
+      <div class="flex justify-between items-start">
+        <div>
+          <span class="text-[10px] font-bold text-[#B85B32] uppercase tracking-wider">Confirmar Encargo</span>
+          <h3 id="modal-product-name" class="text-lg font-bold text-stone-900">-</h3>
+        </div>
+        <button onclick="closeOrderModal()" class="text-stone-400 hover:text-stone-600 p-1">✕</button>
+      </div>
+
+      <div class="flex items-center gap-3 bg-stone-50 p-3 rounded-xl border border-stone-100">
+        <img id="modal-product-img" src="" alt="" class="w-14 h-14 rounded-lg object-cover" onerror="handleImgError(this)" />
+        <div>
+          <p class="text-xs text-stone-500">Vendedor: <strong id="modal-vendor-name" class="text-stone-800">-</strong></p>
+          <p class="text-xs text-stone-500">Punto de retiro: <strong id="modal-vendor-station" class="text-[#B85B32]">-</strong></p>
+          <p id="modal-product-price" class="text-sm font-bold text-emerald-700 mt-0.5">$0</p>
+        </div>
+      </div>
+
+      <div class="space-y-2">
+        <label class="block text-xs font-bold text-stone-700">Seleccioná tu recorrido de tren actual:</label>
+        <select id="modal-train-route" class="w-full text-xs bg-stone-50 border border-stone-200 p-2.5 rounded-xl font-medium focus:outline-none focus:ring-1 focus:ring-[#B85B32]">
+          <option value="Ruta A - IDA (Volcán ➔ Tilcara)">Ruta A - IDA (Mañana)</option>
+          <option value="Ruta A - VUELTA (Tilcara ➔ Volcán)">Ruta A - VUELTA (Tarde)</option>
+          <option value="Ruta B - IDA (Volcán ➔ Tilcara)">Ruta B - IDA (Sombra de Mediodía)</option>
+          <option value="Ruta B - VUELTA (Tilcara ➔ Volcán)">Ruta B - VUELTA (Noche)</option>
+        </select>
+      </div>
+
+      <div class="bg-amber-50 p-3 rounded-xl border border-amber-200/70 text-xs text-amber-900 flex items-start gap-2">
+        <i data-lucide="info" class="w-4 h-4 text-amber-600 shrink-0 mt-0.5"></i>
+        <span>Se abrirá WhatsApp con un mensaje prediseñado indicando tu producto y estación de entrega.</span>
+      </div>
+
+      <div class="flex items-center gap-3 pt-2">
+        <button onclick="closeOrderModal()" class="flex-1 py-2.5 text-xs font-semibold text-stone-600 hover:bg-stone-100 rounded-xl transition-colors">
+          Cancelar
+        </button>
+        <a id="modal-whatsapp-link" href="#" target="_blank" rel="noreferrer" class="flex-1 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold rounded-xl text-center transition-colors flex items-center justify-center gap-2 shadow-md">
+          <i data-lucide="phone" class="w-4 h-4"></i> Enviar Mensaje
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="bg-stone-900 text-stone-400 text-xs py-6 mt-12 border-t border-stone-800">
+    <div class="max-w-7xl mx-auto px-4 text-center space-y-2">
+      <p class="font-semibold text-stone-300">Propuesta de Economía Local para el Tren Solar de la Quebrada</p>
+      <p class="text-stone-500">Volcán • Tumbaya • Purmamarca • Hornillos • Maimará • Tilcara</p>
+    </div>
+  </footer>
+
+  <!-- SCRIPT CON LA LÓGICA DEL MOCKUP INTERACTIVO -->
+  <script>
+    // --- ESTADO INICIAL CON RUTAS DE IMÁGENES RELATIVAS LOCALES ---
+    let vendors = [
+      {
+        id: "v1",
+        name: "Doña Santos Maimara",
+        category: "Artesano",
+        station: "Purmamarca",
+        whatsapp: "+5493884123456",
+        isAvailable: true,
+        bio: "Tejedora ancestral con lana de llama hilada a mano y tintes naturales de la quebrada.",
+        avatar: "images/vendor-dona-santos.jpg",
+        products: [
+          { id: "p1", name: "Poncho Llama Purmamarqueño", price: 450000, desc: "Poncho tejido en telar criollo, 100% fibra de llama natural.", img: "images/poncho-llama.jpg" },
+          { id: "p2", name: "Manta de Guardas Quebradeñas", price: 320000, desc: "Manta rustica ideal para sofá o abrigo con motivos de los cerros.", img: "images/manta-guardas.jpg" },
+          { id: "p3", name: "Gorro Chullo con Orejeras", price: 95000, desc: "Abrigado e hilado a mano, varios colores andinos.", img: "images/gorro-chullo.jpg" }
+        ]
+      },
+      {
+        id: "v2",
+        name: "Don Mateo Apaza",
+        category: "Agricultor",
+        station: "Maimará",
+        whatsapp: "+5493885987654",
+        isAvailable: true,
+        bio: "Agricultor de la Paleta del Pintor. Cultivo ecológico de papas andinas y maíces nativos.",
+        avatar: "images/vendor-don-mateo.jpg",
+        products: [
+          { id: "p4", name: "Malla de Papas Andinas Mixtas (3kg)", price: 65000, desc: "Variedades cuarentona, oca y collareja recien cosechadas.", img: "images/papas-andinas.jpg" },
+          { id: "p5", name: "Maíz Morado para Chicha (1kg)", price: 35000, desc: "Granos orgánicos secados al sol de Maimará.", img: "images/maiz-morado.jpg" },
+          { id: "p6", name: "Frasco Dulce de CAYOTE Casero", price: 42000, desc: "Elaborado con cayotes del huerto propio y azúcar de caña.", img: "images/dulce-cayote.jpg" }
+        ]
+      },
+      {
+        id: "v3",
+        name: "Artesanías Tilcara - Mama Quilla",
+        category: "Artesano",
+        station: "Tilcara",
+        whatsapp: "+5493884888999",
+        isAvailable: true,
+        bio: "Taller cerámico familiar. Recreación de vasijas y cuencos omaguacas.",
+        avatar: "images/vendor-mama-quilla.jpg",
+        products: [
+          { id: "p7", name: "Cuenco Cerámico Tilcareño", price: 110000, desc: "Modelado a mano en arcilla roja cocida en horno de barro.", img: "images/cuenco-ceramico.jpg" },
+          { id: "p8", name: "Sahumador Andino Barro", price: 150000, desc: "Ideal para palo santo y copal, grabado con soles andinos.", img: "images/sahumador-barro.jpg" }
+        ]
+      },
+      {
+        id: "v4",
+        name: "Finca Tumbaya - Hierbas y Especias",
+        category: "Agricultor",
+        station: "Tumbaya",
+        whatsapp: "+5493884777111",
+        isAvailable: true,
+        bio: "Hierbas medicinales y condimentos aromáticos cultivados a la vera del Río Grande.",
+        avatar: "images/vendor-finca-tumbaya.jpg",
+        products: [
+          { id: "p9", name: "Mix de Hierbas para Mate (Muña Muña y Rica Rica)", price: 12000, desc: "Recolectadas en la alta sierra de Tumbaya.", img: "images/hierbas-mate.jpg" },
+          { id: "p10", name: "Pimentón Dulce Cachi/Tumbaya", price: 15000, desc: "Pimiento secado y molido en piedra tradicional.", img: "images/pimenton-dulce.jpg" }
+        ]
+      }
+    ];
+
+    const STATIONS = ["Todas", "Volcán", "Tumbaya", "Purmamarca", "Hornillos", "Maimará", "Tilcara"];
+    const CATEGORIES = ["Todas", "Artesano", "Agricultor"];
+
+    let selectedStation = "Todas";
+    let selectedCategory = "Todas";
+    let currentVendorId = "v1";
+    let selectedOrderData = null;
+
+    // Fallback de imagen por si la ruta relativa no existe localmente en la carpeta
+    function handleImgError(imageEl) {
+      imageEl.onerror = null;
+      imageEl.src = 'https://placehold.co/400x300/e2e8f0/475569?text=Imagen+Local';
+    }
+
+    // Navegación de pestañas
+    function switchTab(tabId) {
+      ['catalog', 'vendor', 'schedules', 'backend'].forEach(t => {
+        const tabEl = document.getElementById(`tab-${t}`);
+        const navEl = document.getElementById(`nav-${t}`);
+        if (t === tabId) {
+          tabEl.classList.remove('hidden');
+          navEl.className = "flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-all bg-amber-100 text-[#8C3A27] font-semibold shadow-sm";
+        } else {
+          tabEl.classList.add('hidden');
+          navEl.className = "flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-all text-amber-100 hover:text-white hover:bg-white/10";
+        }
+      });
+      lucide.createIcons();
+    }
+
+    // Inicialización del Renderizado
+    function init() {
+      renderCategoryButtons();
+      renderStationButtons();
+      renderCatalog();
+      renderVendorSelector();
+      renderVendorPanel();
+      lucide.createIcons();
+    }
+
+    // Renderizado de Filtros
+    function renderCategoryButtons() {
+      const container = document.getElementById('category-buttons');
+      container.innerHTML = CATEGORIES.map(cat => `
+        <button 
+          onclick="setCategory('${cat}')" 
+          class="px-3 py-1.5 text-xs font-medium rounded-lg transition-all ${selectedCategory === cat ? 'bg-[#8C3A27] text-white' : 'bg-stone-100 text-stone-600 hover:bg-stone-200'}"
+        >
+          ${cat}
+        </button>
+      `).join('');
+    }
+
+    function renderStationButtons() {
+      const container = document.getElementById('station-buttons');
+      container.innerHTML = STATIONS.map(st => `
+        <button 
+          onclick="setStation('${st}')" 
+          class="px-3.5 py-1.5 text-xs font-medium rounded-xl border transition-all ${selectedStation === st ? 'bg-amber-600 text-white border-amber-600 shadow-sm' : 'bg-stone-50 text-stone-700 border-stone-200 hover:bg-amber-50 hover:border-amber-300'}"
+        >
+          ${st === "Todas" ? "🚉 Todas las Estaciones" : `Estación ${st}`}
+        </button>
+      `).join('');
+    }
+
+    function setCategory(cat) {
+      selectedCategory = cat;
+      renderCategoryButtons();
+      renderCatalog();
+    }
+
+    function setStation(st) {
+      selectedStation = st;
+      renderStationButtons();
+      renderCatalog();
+    }
+
+    // Renderizar Catálogo de Turistas
+    function renderCatalog() {
+      const container = document.getElementById('catalog-container');
+      const searchQuery = document.getElementById('search-input').value.toLowerCase().trim();
+
+      const filteredVendors = vendors.filter(v => {
+        if (!v.isAvailable) return false;
+        if (selectedStation !== 'Todas' && v.station !== selectedStation) return false;
+        if (selectedCategory !== 'Todas' && v.category !== selectedCategory) return false;
+        if (searchQuery !== '') {
+          const matchName = v.name.toLowerCase().includes(searchQuery);
+          const matchProd = v.products.some(p => p.name.toLowerCase().includes(searchQuery) || p.desc.toLowerCase().includes(searchQuery));
+          return matchName || matchProd;
+        }
+        return true;
+      });
+
+      if (filteredVendors.length === 0) {
+        container.innerHTML = `
+          <div class="text-center py-16 bg-white rounded-2xl border border-dashed border-stone-300 p-8">
+            <i data-lucide="store" class="w-12 h-12 text-stone-300 mx-auto mb-3"></i>
+            <h3 class="text-lg font-semibold text-stone-700">No hay vendedores disponibles en esta estación o categoría</h3>
+            <p class="text-sm text-stone-500 max-w-md mx-auto mt-1">
+              Es posible que los productores locales no estén presentes hoy en el andén o no coincidan con la búsqueda actual. Proba cambiando de estación.
+            </p>
+            <button onclick="resetFilters()" class="mt-4 px-4 py-2 bg-stone-100 text-stone-700 text-xs font-semibold rounded-lg hover:bg-stone-200">
+              Restablecer filtros
+            </button>
+          </div>
+        `;
+        lucide.createIcons();
+        return;
+      }
+
+      container.innerHTML = filteredVendors.map(v => `
+        <div class="bg-white rounded-2xl border border-stone-200/90 shadow-sm overflow-hidden hover:border-amber-300/80 transition-all">
+          <div class="p-4 sm:p-5 bg-gradient-to-r from-stone-50 to-amber-50/40 border-b border-stone-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            <div class="flex items-center gap-3.5">
+              <img src="${v.avatar}" alt="${v.name}" class="w-12 h-12 rounded-full object-cover border-2 border-amber-500 shadow-sm" onerror="handleImgError(this)" />
+              <div>
+                <div class="flex items-center gap-2">
+                  <h3 class="font-bold text-stone-900 text-base sm:text-lg">${v.name}</h3>
+                  <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full ${v.category === 'Artesano' ? 'bg-purple-100 text-purple-800 border border-purple-200' : 'bg-emerald-100 text-emerald-800 border border-emerald-200'}">
+                    ${v.category}
+                  </span>
+                </div>
+                <p class="text-xs text-stone-500 flex items-center gap-1 mt-0.5">
+                  <i data-lucide="map-pin" class="w-3.5 h-3.5 text-[#B85B32]"></i> Estación habitual: <strong class="text-stone-700 font-medium">${v.station}</strong>
+                </p>
+              </div>
+            </div>
+
+            <div class="flex items-center gap-2 w-full sm:w-auto justify-between sm:justify-end">
+              <span class="inline-flex items-center gap-1 text-xs font-semibold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200">
+                <i data-lucide="check-circle" class="w-3.5 h-3.5 text-emerald-600"></i> Presente hoy en andén
+              </span>
+            </div>
+          </div>
+
+          <p class="px-5 py-2.5 text-xs text-stone-600 bg-stone-50/50 border-b border-stone-100 italic">
+            "${v.bio}"
+          </p>
+
+          <div class="p-4 sm:p-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            ${v.products.map(p => `
+              <div class="group bg-white rounded-xl border border-stone-200 overflow-hidden flex flex-col justify-between hover:shadow-md transition-all">
+                <div>
+                  <div class="relative h-40 bg-stone-100 overflow-hidden">
+                    <img src="${p.img}" alt="${p.name}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" onerror="handleImgError(this)" />
+                    <div class="absolute top-2 right-2 bg-stone-900/80 backdrop-blur-md text-amber-300 text-xs font-bold px-2.5 py-1 rounded-lg">
+                      $${p.price.toLocaleString('es-AR')}
+                    </div>
+                  </div>
+                  <div class="p-3.5 space-y-1">
+                    <h4 class="font-bold text-stone-800 text-sm group-hover:text-[#B85B32] transition-colors">${p.name}</h4>
+                    <p class="text-xs text-stone-500 line-clamp-2 leading-relaxed">${p.desc}</p>
+                  </div>
+                </div>
+
+                <div class="p-3.5 pt-0">
+                  <button 
+                    onclick="openOrderModal('${v.id}', '${p.id}')"
+                    class="w-full py-2 px-3 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold rounded-lg transition-colors flex items-center justify-center gap-2 shadow-sm"
+                  >
+                    <i data-lucide="phone" class="w-3.5 h-3.5"></i> Pedir para retirar en parada
+                  </button>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `).join('');
+
+      lucide.createIcons();
+    }
+
+    function resetFilters() {
+      selectedStation = 'Todas';
+      selectedCategory = 'Todas';
+      document.getElementById('search-input').value = '';
+      renderCategoryButtons();
+      renderStationButtons();
+      renderCatalog();
+    }
+
+    // Renderizar Panel del Vendedor
+    function renderVendorSelector() {
+      const select = document.getElementById('vendor-selector');
+      select.innerHTML = vendors.map(v => `<option value="${v.id}">${v.name} (${v.station})</option>`).join('');
+      select.value = currentVendorId;
+    }
+
+    function changeCurrentVendor(vendorId) {
+      currentVendorId = vendorId;
+      renderVendorPanel();
+    }
+
+    function renderVendorPanel() {
+      const vendor = vendors.find(v => v.id === currentVendorId) || vendors[0];
+
+      document.getElementById('vendor-panel-name').innerText = vendor.name;
+      document.getElementById('vendor-panel-info').innerHTML = `Estación asignada: <strong>${vendor.station}</strong> • Categoría: <strong>${vendor.category}</strong>`;
+
+      const toggleBtn = document.getElementById('vendor-toggle-btn');
+      const toggleDot = document.getElementById('vendor-toggle-dot');
+      const statusBanner = document.getElementById('vendor-status-banner');
+
+      if (vendor.isAvailable) {
+        toggleBtn.className = "relative inline-flex h-7 w-14 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none bg-emerald-600";
+        toggleDot.className = "pointer-events-none inline-block h-6 w-6 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out translate-x-7";
+        statusBanner.className = "p-4 rounded-xl text-xs font-medium flex items-center gap-3 bg-emerald-50 text-emerald-900 border border-emerald-200";
+        statusBanner.innerHTML = `
+          <i data-lucide="check-circle" class="w-5 h-5 text-emerald-600 shrink-0"></i>
+          <div>
+            <strong>¡Tu stock está PUBLICADO e HABILITADO hoy!</strong> Los pasajeros del Tren Solar pueden ver tus productos y contactarte para retirar en la estación de ${vendor.station}.
+          </div>
+        `;
+      } else {
+        toggleBtn.className = "relative inline-flex h-7 w-14 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none bg-stone-300";
+        toggleDot.className = "pointer-events-none inline-block h-6 w-6 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out translate-x-0";
+        statusBanner.className = "p-4 rounded-xl text-xs font-medium flex items-center gap-3 bg-amber-50 text-amber-900 border border-amber-200";
+        statusBanner.innerHTML = `
+          <i data-lucide="x-circle" class="w-5 h-5 text-amber-600 shrink-0"></i>
+          <div>
+            <strong>Tu stock está OCULTO temporalmente.</strong> Si no puedes acercarte a la estación hoy, mantén este switch apagado para evitar pedidos fallidos.
+          </div>
+        `;
+      }
+
+      // Renderizar productos del vendedor
+      document.getElementById('vendor-products-title').innerText = `Tus Productos Publicados (${vendor.products.length}/6)`;
+      const grid = document.getElementById('vendor-products-grid');
+      grid.innerHTML = vendor.products.map(p => `
+        <div class="p-3 bg-white border border-stone-200 rounded-xl flex items-center justify-between gap-3">
+          <div class="flex items-center gap-3">
+            <img src="${p.img}" alt="${p.name}" class="w-12 h-12 rounded-lg object-cover border" onerror="handleImgError(this)" />
+            <div>
+              <p class="font-bold text-xs text-stone-800">${p.name}</p>
+              <p class="text-xs text-emerald-700 font-semibold">$${p.price.toLocaleString('es-AR')}</p>
+            </div>
+          </div>
+          <button 
+            onclick="deleteProduct('${p.id}')"
+            class="text-red-500 hover:text-red-700 text-xs font-medium px-2 py-1 bg-red-50 rounded-lg border border-red-100"
+          >
+            Eliminar
+          </button>
+        </div>
+      `).join('');
+
+      lucide.createIcons();
+    }
+
+    function toggleCurrentVendorStock() {
+      const vendor = vendors.find(v => v.id === currentVendorId);
+      if (vendor) {
+        vendor.isAvailable = !vendor.isAvailable;
+        renderVendorPanel();
+        renderCatalog();
+      }
+    }
+
+    function handleAddProduct(e) {
+      e.preventDefault();
+      const name = document.getElementById('input-prod-name').value.trim();
+      const price = parseFloat(document.getElementById('input-prod-price').value);
+      const img = document.getElementById('input-prod-img').value.trim();
+      const desc = document.getElementById('input-prod-desc').value.trim();
+
+      const vendor = vendors.find(v => v.id === currentVendorId);
+      if (vendor.products.length >= 6) {
+        alert("Alcanzaste el límite de 6 productos para el catálogo express.");
+        return;
+      }
+
+      const newProd = {
+        id: "p_" + Date.now(),
+        name,
+        price,
+        desc: desc || "Producto artesanal o fresco directo de la Quebrada.",
+        img: img || "images/producto-nuevo.jpg"
+      };
+
+      vendor.products.push(newProd);
+
+      document.getElementById('input-prod-name').value = '';
+      document.getElementById('input-prod-price').value = '';
+      document.getElementById('input-prod-img').value = '';
+      document.getElementById('input-prod-desc').value = '';
+
+      renderVendorPanel();
+      renderCatalog();
+    }
+
+    function deleteProduct(prodId) {
+      const vendor = vendors.find(v => v.id === currentVendorId);
+      vendor.products = vendor.products.filter(p => p.id !== prodId);
+      renderVendorPanel();
+      renderCatalog();
+    }
+
+    // Modal de Pedidos
+    function openOrderModal(vendorId, prodId) {
+      const vendor = vendors.find(v => v.id === vendorId);
+      const product = vendor.products.find(p => p.id === prodId);
+
+      selectedOrderData = { vendor, product };
+
+      document.getElementById('modal-product-name').innerText = product.name;
+      document.getElementById('modal-vendor-name').innerText = vendor.name;
+      document.getElementById('modal-vendor-station').innerText = `Estación ${vendor.station}`;
+      document.getElementById('modal-product-price').innerText = `$${product.price.toLocaleString('es-AR')}`;
+      document.getElementById('modal-product-img').src = product.img;
+
+      updateWhatsAppLink();
+
+      document.getElementById('modal-train-route').onchange = updateWhatsAppLink;
+      document.getElementById('order-modal').classList.remove('hidden');
+      lucide.createIcons();
+    }
+
+    function updateWhatsAppLink() {
+      if (!selectedOrderData) return;
+      const { vendor, product } = selectedOrderData;
+      const routeInfo = document.getElementById('modal-train-route').value;
+      const text = `Hola ${vendor.name}! 🚂 Viajo en el Tren Solar (${routeInfo}). Me gustaría encargar: "${product.name}" ($${product.price.toLocaleString('es-AR')}). ¿Nos encontramos en la estación de ${vendor.station} cuando pare el tren para la entrega? Gracias!`;
+      const link = `https://wa.me/${vendor.whatsapp.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(text)}`;
+      document.getElementById('modal-whatsapp-link').href = link;
+    }
+
+    function closeOrderModal() {
+      document.getElementById('order-modal').classList.add('hidden');
+      selectedOrderData = null;
+    }
+
+    // Inicializar al cargar la ventana
+    window.onload = init;
+  </script>
+</body>
+</html>
